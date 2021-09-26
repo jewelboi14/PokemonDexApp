@@ -47,13 +47,12 @@ final class PokemonCell: UICollectionViewCell {
     override func layoutSubviews() {
         
         NSLayoutConstraint.activate([
+            
             pokeImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -10),
             pokeImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             pokeImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -40),
-            pokeImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, constant: -40)
-        ])
-        
-        NSLayoutConstraint.activate([
+            pokeImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, constant: -40),
+       
             pokeNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             pokeNameLabel.topAnchor.constraint(equalTo: pokeImageView.bottomAnchor, constant: 3),
             pokeNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor),

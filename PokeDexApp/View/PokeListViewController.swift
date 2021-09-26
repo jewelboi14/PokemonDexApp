@@ -135,7 +135,7 @@ final class PokeListViewController: UICollectionViewController {
         navigationItem.titleView = searchBar
         searchBar.showsCancelButton = true
         navigationItem.rightBarButtonItem = nil
-        searchBar.becomeFirstResponder()
+        searchBar.resignFirstResponder()
     }
     
     @objc func blurTapped() {
@@ -163,18 +163,30 @@ final class PokeListViewController: UICollectionViewController {
 extension PokeListViewController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.pokemonList.count
+        
+        if viewModel.isFiltering == true {
+            return viewModel.filteredPokemon.count
+        } else {
+            return viewModel.pokemonList.count
+        }
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let pokemon = viewModel.pokemonList[indexPath.row]
+        let pokemon: PokeListData?
+        if viewModel.isFiltering == true {
+            pokemon = viewModel.filteredPokemon[indexPath.row]
+        } else {
+            pokemon = viewModel.pokemonList[indexPath.row]
+        }
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.identifier, for: indexPath) as? PokemonCell  else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.identifier,
+                                                            for: indexPath) as? PokemonCell  else {
             return UICollectionViewCell()
         }
         
-        cell.setupPokemon(name: pokemon.name ?? "", image: pokemon.image ?? UIImage())
+        cell.setupPokemon(name: pokemon?.name ?? "", image: pokemon?.image ?? UIImage())
         cell.backgroundColor = .elephantBoneDark()
         return cell
     }
@@ -201,6 +213,7 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
         
         view.addSubview(popUpView)
         view.addSubview(moreInfoButton)
+        searchBar.resignFirstResponder()
         popUpView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         moreInfoButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         popUpView.alpha = 0
@@ -216,30 +229,40 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
         
         //pokemon info gets shown
         
-        let pokemon = viewModel.pokemonList[indexPath.row]
+        viewModel.getEvoChain(at: indexPath.row)
+        let pokemon: PokeListData?
+        if viewModel.isFiltering == true {
+            pokemon = viewModel.filteredPokemon[indexPath.row]
+        } else {
+            pokemon = viewModel.pokemonList[indexPath.row]
+        }
         
-        popUpView.setupPokeInfo(name: pokemon.name ?? "unknown",
-                                attack: String(pokemon.attack ?? 0),
-                                defence: String(pokemon.defense ?? 0),
-                                type: pokemon.type ?? "unknown",
-                                image: pokemon.image ?? UIImage())
+        
+        popUpView.setupPokeInfo(name: pokemon?.name ?? "unknown",
+                                attack: String(pokemon?.attack ?? 0),
+                                defence: String(pokemon?.defense ?? 0),
+                                type: pokemon?.type ?? "unknown",
+                                image: pokemon?.image ?? UIImage())
         
         //moreDetails menu configure
         
-        viewModel.getEvoChain(at: indexPath.row)
+        
+        
         if viewModel.pokemonEvoArray.count > 1 {
-            moreDetailsVc.setupEvolution(evo1Image: pokemon.evoArray?[0].image ?? UIImage(),
-                                         evo2Image: pokemon.evoArray?[1].image ?? UIImage())
+            moreDetailsVc.setupEvolution(evo1Image: pokemon?.evoArray?[0].image ?? UIImage(),
+                                         evo2Image: pokemon?.evoArray?[1].image ?? UIImage())
+        } else {
+            moreDetailsVc.setupEvolution(evo1Image: pokemon?.evoArray?[0].image ?? UIImage(),
+                                         evo2Image: UIImage())
         }
-        moreDetailsVc.setupPokeInfo(name: pokemon.name ?? "unknown",
-                                    attack: String(pokemon.attack ?? 0),
-                                    defence: String(pokemon.defense ?? 0),
-                                    type: pokemon.type ?? "unknown",
-                                    image: pokemon.image ?? UIImage(),
-                                    weight: String(pokemon.weight ?? 0),
-                                    height: String(pokemon.height ?? 0),
-                                    description: pokemon.description ?? "unknown"
-        )
+        moreDetailsVc.setupPokeInfo(name: pokemon?.name ?? "unknown",
+                                    attack: String(pokemon?.attack ?? 0),
+                                    defence: String(pokemon?.defense ?? 0),
+                                    type: pokemon?.type ?? "unknown",
+                                    image: pokemon?.image ?? UIImage(),
+                                    weight: String(pokemon?.weight ?? 0),
+                                    height: String(pokemon?.height ?? 0),
+                                    description: pokemon?.description ?? "unknown")
     }
     
 }
@@ -247,32 +270,36 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - UISearchBarDelegate
 
 extension PokeListViewController: UISearchBarDelegate {
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.searchTextField.text = ""
+        viewModel.isFiltering = false
+        viewModel.getPokemonList { [weak self] pokemon in
+            self?.collectionView.reloadData()
+        }
         navigationItem.titleView = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
                                                             target: self,
                                                             action: #selector(showSearchBar))
         searchBar.showsCancelButton = false
-        searchBar.searchTextField.text = ""
-        viewModel.getPokemonList { [weak self] pokemon in
-            self?.collectionView.reloadData()
-        }
         
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text != "" {
-            viewModel.pokemonList = viewModel.pokemonList.filter({
+            viewModel.filteredPokemon = viewModel.pokemonList.filter({
                 (pokemon: PokeListData) in
-                
+                viewModel.isFiltering = true
                 return pokemon.name?.lowercased().contains(searchText.lowercased()) ?? false
             })
             collectionView.reloadData()
         } else {
+            viewModel.isFiltering = false
             viewModel.getPokemonList { [weak self] pokemon in
                 self?.collectionView.reloadData()
             }
         }
+        
         
     }
 }

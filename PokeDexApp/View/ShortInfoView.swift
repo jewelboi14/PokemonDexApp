@@ -122,74 +122,59 @@ final class ShortInfoView: UIView {
         //dynamic labels layout
         
         NSLayoutConstraint.activate([
+            
             pokeImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -250),
             pokeImageView.widthAnchor.constraint(equalTo: widthAnchor, constant: -200),
             pokeImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             pokeImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -30),
             
             
-        ])
-        
-        NSLayoutConstraint.activate([
             pokeNameLabel.widthAnchor.constraint(equalTo: widthAnchor, constant: -135),
             pokeNameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             pokeNameLabel.bottomAnchor.constraint(equalTo: pokeImageView.topAnchor, constant: -30),
-            pokeNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: -20)
-        ])
-        
-        NSLayoutConstraint.activate([
+            pokeNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: -20),
+
             pokeTypeLabel.topAnchor.constraint(equalTo: pokeImageView.bottomAnchor, constant: 6),
             pokeTypeLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 180),
             pokeTypeLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -40),
             pokeTypeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -110),
-        ])
-        
-        NSLayoutConstraint.activate([
+       
             pokeAttackLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 180),
             pokeAttackLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -40),
             pokeAttackLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -65),
-            pokeAttackLabel.topAnchor.constraint(equalTo: pokeTypeLabel.bottomAnchor, constant: 6)
-        ])
-        
-        NSLayoutConstraint.activate([
+            pokeAttackLabel.topAnchor.constraint(equalTo: pokeTypeLabel.bottomAnchor, constant: 6),
+       
             pokeDefenceLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 180),
             pokeDefenceLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -40),
             pokeDefenceLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
-            pokeDefenceLabel.topAnchor.constraint(equalTo: pokeAttackLabel.bottomAnchor, constant: 6)
-        ])
+            pokeDefenceLabel.topAnchor.constraint(equalTo: pokeAttackLabel.bottomAnchor, constant: 6),
+        
         
         //non-dynamic labels layout
         
-        NSLayoutConstraint.activate([
+      
             leftTypeLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 40),
             leftTypeLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -180),
             leftTypeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -110),
-            leftTypeLabel.topAnchor.constraint(equalTo: pokeImageView.bottomAnchor, constant: 6)
-        ])
+            leftTypeLabel.topAnchor.constraint(equalTo: pokeImageView.bottomAnchor, constant: 6),
         
-        NSLayoutConstraint.activate([
             leftAttackLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 40),
             leftAttackLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -180),
             leftAttackLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -65),
-            leftAttackLabel.topAnchor.constraint(equalTo: leftTypeLabel.bottomAnchor, constant: 6)
-        ])
+            leftAttackLabel.topAnchor.constraint(equalTo: leftTypeLabel.bottomAnchor, constant: 6),
         
-        NSLayoutConstraint.activate([
             leftDefenceLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 40),
             leftDefenceLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -180),
             leftDefenceLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
-            leftDefenceLabel.topAnchor.constraint(equalTo: leftAttackLabel.bottomAnchor, constant: 6)
-        ])
+            leftDefenceLabel.topAnchor.constraint(equalTo: leftAttackLabel.bottomAnchor, constant: 6),
         
-        NSLayoutConstraint.activate([
             dismissButton.leftAnchor.constraint(equalTo: pokeNameLabel.rightAnchor, constant: 10),
             dismissButton.widthAnchor.constraint(equalToConstant: 40),
             dismissButton.heightAnchor.constraint(equalToConstant: 40),
             dismissButton.bottomAnchor.constraint(equalTo: pokeNameLabel.bottomAnchor, constant: -17)
+            
         ])
-        
     }
-    
     
     //MARK: - Setup pokemon inforamtion inside labels
     

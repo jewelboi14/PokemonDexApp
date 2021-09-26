@@ -10,7 +10,7 @@ import UIKit
 final class DetailsViewController: UIViewController {
     
     //MARK: - Properties
-    
+        
     let pokeImageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
