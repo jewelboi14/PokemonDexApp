@@ -25,4 +25,18 @@ final class PokeViewModel {
         }
     }
     
+    func getEvoChain(at row: Int) {
+            pokemonEvoArray = []
+            if let evoChain = pokemonList[row].evolutionChain {
+                let evolutionChain = EvolutionChain(evolutionArray: evoChain)
+                let evoIds = evolutionChain.evolutionIds
+                for id in evoIds {
+                    if id <= 151 {
+                    self.pokemonEvoArray.append(pokemonList[id-1])
+                    }
+                }
+                pokemonList[row].evoArray = pokemonEvoArray
+            }
+    }
+    
 }

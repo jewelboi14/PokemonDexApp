@@ -102,22 +102,25 @@ final class PokeListViewController: UICollectionViewController {
     
     //MARK: - Layout pop up window and blur effect
     
-    func layoutPopUpView() {
+    private func layoutPopUpView() {
         NSLayoutConstraint.activate([
+            
+            //popUpView
+            
             popUpView.widthAnchor.constraint(equalToConstant: view.frame.width-64),
             popUpView.heightAnchor.constraint(equalToConstant: view.frame.width-20),
             popUpView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -35),
-            popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
+            popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            //blurView
+            
             blurView.leftAnchor.constraint(equalTo: view.leftAnchor),
             blurView.rightAnchor.constraint(equalTo: view.rightAnchor),
             blurView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
+            blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            //moreInfoButton
+            
             moreInfoButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
             moreInfoButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.10),
             moreInfoButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 250),
@@ -146,7 +149,7 @@ final class PokeListViewController: UICollectionViewController {
     
     //MARK: - Gestrure recognizer
     
-    func setupGestureRecognizer() {
+    private func setupGestureRecognizer() {
         tapRecognizer.addTarget(self, action: #selector(blurTapped))
         tapRecognizer.numberOfTouchesRequired = 1
         tapRecognizer.numberOfTapsRequired = 1
@@ -171,7 +174,7 @@ extension PokeListViewController {
             return UICollectionViewCell()
         }
         
-        cell.setupPokemon(name: pokemon.name ?? "", image: UIImage())
+        cell.setupPokemon(name: pokemon.name ?? "", image: pokemon.image ?? UIImage())
         cell.backgroundColor = .elephantBoneDark()
         return cell
     }
@@ -193,6 +196,9 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        //popUp window gets triggered
+        
         view.addSubview(popUpView)
         view.addSubview(moreInfoButton)
         popUpView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
@@ -206,28 +212,25 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
             self.moreInfoButton.transform = CGAffineTransform.identity
             self.popUpView.transform = CGAffineTransform.identity
         }
-        
         layoutPopUpView()
+        
+        //pokemon info gets shown
         
         let pokemon = viewModel.pokemonList[indexPath.row]
         
+        popUpView.setupPokeInfo(name: pokemon.name ?? "unknown",
+                                attack: String(pokemon.attack ?? 0),
+                                defence: String(pokemon.defense ?? 0),
+                                type: pokemon.type ?? "unknown",
+                                image: pokemon.image ?? UIImage())
         
-            
-   
-   
+        //moreDetails menu configure
         
-        if let evoArray = pokemon.evoArray {
-            if evoArray.count > 1 {
-                moreDetailsVc.setupEvolution(evo1Image: evoArray[0].image ?? UIImage(),
-                                             evo2Image: evoArray[1].image ?? UIImage())
-               
-            } else {
-                moreDetailsVc.setupEvolution(evo1Image: evoArray[0].image ?? UIImage(),
-                                             evo2Image: UIImage())
-                
-            }
+        viewModel.getEvoChain(at: indexPath.row)
+        if viewModel.pokemonEvoArray.count > 1 {
+            moreDetailsVc.setupEvolution(evo1Image: pokemon.evoArray?[0].image ?? UIImage(),
+                                         evo2Image: pokemon.evoArray?[1].image ?? UIImage())
         }
-        
         moreDetailsVc.setupPokeInfo(name: pokemon.name ?? "unknown",
                                     attack: String(pokemon.attack ?? 0),
                                     defence: String(pokemon.defense ?? 0),
@@ -236,17 +239,9 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
                                     weight: String(pokemon.weight ?? 0),
                                     height: String(pokemon.height ?? 0),
                                     description: pokemon.description ?? "unknown"
-                                   )
-        
-        
-        popUpView.setupPokeInfo(name: pokemon.name ?? "unknown",
-                                attack: String(pokemon.attack ?? 0),
-                                defence: String(pokemon.defense ?? 0),
-                                type: pokemon.type ?? "unknown",
-                                image: pokemon.image ?? UIImage())
-        
+        )
     }
-
+    
 }
 
 //MARK: - UISearchBarDelegate

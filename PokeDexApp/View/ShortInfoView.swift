@@ -103,8 +103,6 @@ final class ShortInfoView: UIView {
     
     //MARK: - Layout
     
-    
-    
     private func configureUI() {
         
         //add subview
