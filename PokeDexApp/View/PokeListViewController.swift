@@ -171,7 +171,7 @@ extension PokeListViewController {
             return UICollectionViewCell()
         }
         
-        cell.setupPokemon(name: pokemon.name ?? "", image: pokemon.image ?? UIImage())
+        cell.setupPokemon(name: pokemon.name ?? "", image: UIImage())
         cell.backgroundColor = .elephantBoneDark()
         return cell
     }
@@ -210,21 +210,11 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
         layoutPopUpView()
         
         let pokemon = viewModel.pokemonList[indexPath.row]
-        viewModel.pokemonEvoArray = []
-        
-        if let evoChain = pokemon.evolutionChain {
-            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
-            let evoIds = evolutionChain.evolutionIds
-            
-            evoIds.forEach { id in
-                    viewModel.pokemonEvoArray.append(viewModel.pokemonList[id - 1])
-            }
-            
-            pokemon.evoArray = viewModel.pokemonEvoArray
-        }
-            
         
         
+            
+   
+   
         
         if let evoArray = pokemon.evoArray {
             if evoArray.count > 1 {
