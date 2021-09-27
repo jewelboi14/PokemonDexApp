@@ -9,7 +9,6 @@ import UIKit
 
 final class PokeListViewController: UICollectionViewController {
     
-    
     //MARK: - Constants
     
     private let moreDetailsVc = DetailsViewController()
@@ -225,6 +224,7 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
             self.moreInfoButton.transform = CGAffineTransform.identity
             self.popUpView.transform = CGAffineTransform.identity
         }
+        
         layoutPopUpView()
         
         //pokemon info gets shown
@@ -237,7 +237,6 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
             pokemon = viewModel.pokemonList[indexPath.row]
         }
         
-        
         popUpView.setupPokeInfo(name: pokemon?.name ?? "unknown",
                                 attack: String(pokemon?.attack ?? 0),
                                 defence: String(pokemon?.defense ?? 0),
@@ -245,8 +244,6 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
                                 image: pokemon?.image ?? UIImage())
         
         //moreDetails menu configure
-        
-        
         
         if viewModel.pokemonEvoArray.count > 1 {
             moreDetailsVc.setupEvolution(evo1Image: pokemon?.evoArray?[0].image ?? UIImage(),
@@ -299,9 +296,8 @@ extension PokeListViewController: UISearchBarDelegate {
                 self?.collectionView.reloadData()
             }
         }
-        
-        
     }
+    
 }
 
 //MARK: - PopUpDelegate implementation
@@ -317,7 +313,6 @@ extension PokeListViewController: PopUpDelegate {
         } completion: { _ in
             self.popUpView.removeFromSuperview()
             self.moreInfoButton.removeFromSuperview()
-            
         }
     }
     

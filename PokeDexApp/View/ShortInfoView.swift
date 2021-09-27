@@ -8,6 +8,9 @@
 import Foundation
 import UIKit
 
+
+//MARK: - PopUpDelegate
+
 protocol PopUpDelegate {
     func dismissPopUpsHandle()
 }
@@ -58,7 +61,6 @@ final class ShortInfoView: UIView {
         button.backgroundColor = .mainPink()
         button.addTarget(self, action: #selector(dismissPressed), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        
         return button
     }()
     
@@ -128,7 +130,6 @@ final class ShortInfoView: UIView {
             pokeImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             pokeImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -30),
             
-            
             pokeNameLabel.widthAnchor.constraint(equalTo: widthAnchor, constant: -135),
             pokeNameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             pokeNameLabel.bottomAnchor.constraint(equalTo: pokeImageView.topAnchor, constant: -30),
@@ -180,8 +181,8 @@ final class ShortInfoView: UIView {
     
     func setupPokeInfo(name: String, attack: String, defence: String, type: String, image: UIImage) {
         self.pokeTypeLabel.text = type
-        self.pokeAttackLabel.text = String(attack)
-        self.pokeDefenceLabel.text = String(defence)
+        self.pokeAttackLabel.text = attack
+        self.pokeDefenceLabel.text = defence
         self.pokeNameLabel.text = name
         self.pokeImageView.image = image
     }

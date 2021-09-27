@@ -19,10 +19,12 @@ final class PokeViewModel {
     
     var pokemonEvoArray: [PokeListData] = []
     
-    var pokeActualArray: [PokeListData]?
+    private var pokeActualArray: [PokeListData]?
     
     
-    //MARK: - Function to pass pokemon array to view
+    //MARK: - Method to pass pokemon information to view
+    
+    //Pokemon info array
     
     func getPokemonList(completion: @escaping ([PokeListData]) -> ()) {
         NetworkManager.shared.fetchPokemonList { pokemon in
@@ -30,6 +32,8 @@ final class PokeViewModel {
             completion(pokemon)
         }
     }
+    
+    //Pokemon evolution chain
     
     func getEvoChain(at row: Int) {
         pokemonEvoArray = []
@@ -42,11 +46,11 @@ final class PokeViewModel {
         if let evoChain = pokeActualArray?[row].evolutionChain {
             let evolutionChain = EvolutionChain(evolutionArray: evoChain)
             let evoIds = evolutionChain.evolutionIds
-                for id in evoIds {
-                    if id <= 151 {
-                            self.pokemonEvoArray.append(pokemonList[id-1])
-                    }
+            for id in evoIds {
+                if id <= 151 {
+                    self.pokemonEvoArray.append(pokemonList[id-1])
                 }
+            }
             
             pokeActualArray?[row].evoArray = pokemonEvoArray
         }

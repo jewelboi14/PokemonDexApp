@@ -38,10 +38,11 @@ final class PokeListData {
         self.type = dictionary["type"] as? String
         self.evolutionChain = dictionary["evolutionChain"] as? [[String: AnyObject]]
         
-        
     }
     
 }
+
+//MARK: - EvolutionChain
 
 struct EvolutionChain {
     

@@ -13,7 +13,7 @@ final class NetworkManager {
     
     //MARK: - Constants
     
-    let mainUrl = "https://pokedex-bb36f.firebaseio.com/pokemon.json"
+    private let mainUrl = "https://pokedex-bb36f.firebaseio.com/pokemon.json"
     
     //MARK: - JSON handling methods
     
@@ -43,7 +43,6 @@ final class NetworkManager {
             } catch {
                 print("can't get pokemon list \(error)")
             }
-            
         }
         task.resume()
     }
