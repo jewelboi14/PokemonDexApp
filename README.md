@@ -1,5 +1,5 @@
 # PokemonDexApp
-This is the simple iOS for searching and browsing all classic 151 pokemon!
+This is the simple iOS app for searching and browsing all classic 151 pokemon!
 This project includes:
 - Searching through the pokemons
 - Smooth blur and animation if item in colletion view gets tapped
