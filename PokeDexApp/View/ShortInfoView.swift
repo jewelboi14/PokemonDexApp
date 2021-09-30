@@ -179,12 +179,14 @@ final class ShortInfoView: UIView {
     
     //MARK: - Setup pokemon inforamtion inside labels
     
-    func setupPokeInfo(name: String, attack: String, defence: String, type: String, image: UIImage) {
+    func setupPokeInfo(name: String, attack: String, defence: String, type: String, imageUrl: String) {
         self.pokeTypeLabel.text = type
         self.pokeAttackLabel.text = attack
         self.pokeDefenceLabel.text = defence
         self.pokeNameLabel.text = name
-        self.pokeImageView.image = image
+        PokeViewModel.shared.getPokemonImage(url: imageUrl) { image in
+            self.pokeImageView.image = image
+        }
     }
     
     //MARK: - Dismiss pressed selector

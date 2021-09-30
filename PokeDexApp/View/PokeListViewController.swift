@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  PokeListViewController.swift
 //  PokeDexApp
 //
 //  Created by Михаил on 21.09.2021.
@@ -12,7 +12,6 @@ final class PokeListViewController: UICollectionViewController {
     //MARK: - Constants
     
     private let moreDetailsVc = DetailsViewController()
-    private let viewModel = PokeViewModel()
     private let tapRecognizer = UITapGestureRecognizer()
     
     //MARK: - Properties
@@ -58,7 +57,7 @@ final class PokeListViewController: UICollectionViewController {
                                 forCellWithReuseIdentifier: PokemonCell.identifier)
         configureViewComponents()
         
-        viewModel.getPokemonList { [weak self] pokemon in
+        PokeViewModel.shared.getPokemonList { [weak self] pokemon in
             self?.collectionView.reloadData()
         }
         
@@ -75,16 +74,18 @@ final class PokeListViewController: UICollectionViewController {
         
         //navigation controller
         
-        navigationController?.navigationBar.barTintColor = .mainPink()
-        navigationController?.navigationBar.tintColor = .elephantBone()
-        navigationController?.navigationBar.barStyle = .black
+        guard let navVc = navigationController else { return }
+        
+        navVc.navigationBar.barTintColor = .mainPink()
+        navVc.navigationBar.tintColor = .elephantBone()
+        navVc.navigationBar.barStyle = .black
         navigationItem.title = "Pokedex"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
                                                             target: self,
                                                             action: #selector(showSearchBar))
         navigationItem.rightBarButtonItem?.tintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.elephantBone()]
-        navigationController?.navigationBar.isTranslucent = false
+        navVc.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.elephantBone()]
+        navVc.navigationBar.isTranslucent = false
         
         //searchBar
         
@@ -163,10 +164,10 @@ extension PokeListViewController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        if viewModel.isFiltering == true {
-            return viewModel.filteredPokemon.count
+        if PokeViewModel.shared.isFiltering == true {
+            return PokeViewModel.shared.filteredPokemon.count
         } else {
-            return viewModel.pokemonList.count
+            return PokeViewModel.shared.pokemonList.count
         }
         
     }
@@ -174,10 +175,10 @@ extension PokeListViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let pokemon: PokeListData?
-        if viewModel.isFiltering == true {
-            pokemon = viewModel.filteredPokemon[indexPath.row]
+        if PokeViewModel.shared.isFiltering == true {
+            pokemon = PokeViewModel.shared.filteredPokemon[indexPath.row]
         } else {
-            pokemon = viewModel.pokemonList[indexPath.row]
+            pokemon = PokeViewModel.shared.pokemonList[indexPath.row]
         }
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.identifier,
@@ -185,7 +186,10 @@ extension PokeListViewController {
             return UICollectionViewCell()
         }
         
-        cell.setupPokemon(name: pokemon?.name ?? "", image: pokemon?.image ?? UIImage())
+        if let pokemon = pokemon {
+            cell.setupPokemon(name: pokemon.name, imageUrl: pokemon.imageUrl)
+        }
+        
         cell.backgroundColor = .elephantBoneDark()
         return cell
     }
@@ -229,40 +233,56 @@ extension PokeListViewController: UICollectionViewDelegateFlowLayout {
         
         //pokemon info gets shown
         
-        viewModel.getEvoChain(at: indexPath.row)
         let pokemon: PokeListData?
-        if viewModel.isFiltering == true {
-            pokemon = viewModel.filteredPokemon[indexPath.row]
+        
+        if PokeViewModel.shared.isFiltering == true {
+            pokemon = PokeViewModel.shared.filteredPokemon[indexPath.row]
         } else {
-            pokemon = viewModel.pokemonList[indexPath.row]
+            pokemon = PokeViewModel.shared.pokemonList[indexPath.row]
         }
         
-        popUpView.setupPokeInfo(name: pokemon?.name ?? "unknown",
-                                attack: String(pokemon?.attack ?? 0),
-                                defence: String(pokemon?.defense ?? 0),
-                                type: pokemon?.type ?? "unknown",
-                                image: pokemon?.image ?? UIImage())
         
-        //moreDetails menu configure
+        PokeViewModel.shared.getPokeEvolution(id: indexPath.row)
         
-        if viewModel.pokemonEvoArray.count > 1 {
-            moreDetailsVc.setupEvolution(evo1Image: pokemon?.evoArray?[0].image ?? UIImage(),
-                                         evo2Image: pokemon?.evoArray?[1].image ?? UIImage())
-        } else {
-            moreDetailsVc.setupEvolution(evo1Image: pokemon?.evoArray?[0].image ?? UIImage(),
-                                         evo2Image: UIImage())
+        
+        
+        if let pokemon = pokemon {
+            
+            popUpView.setupPokeInfo(name: pokemon.name,
+                                    attack: String(pokemon.attack),
+                                    defence: String(pokemon.defense),
+                                    type: pokemon.type,
+                                    imageUrl: pokemon.imageUrl)
+            
+            moreDetailsVc.setupPokeInfo(name: pokemon.name,
+                                        attack: String(pokemon.attack),
+                                        defence: String(pokemon.defense),
+                                        type: pokemon.type,
+                                        imageUrl: pokemon.imageUrl,
+                                        weight: String(pokemon.weight),
+                                        height: String(pokemon.height),
+                                        description: pokemon.description)
+            
         }
-        moreDetailsVc.setupPokeInfo(name: pokemon?.name ?? "unknown",
-                                    attack: String(pokemon?.attack ?? 0),
-                                    defence: String(pokemon?.defense ?? 0),
-                                    type: pokemon?.type ?? "unknown",
-                                    image: pokemon?.image ?? UIImage(),
-                                    weight: String(pokemon?.weight ?? 0),
-                                    height: String(pokemon?.height ?? 0),
-                                    description: pokemon?.description ?? "unknown")
+        
+        if PokeViewModel.shared.pokemonEvoArray.count > 1 {
+            if let evo1ImageUrl = PokeViewModel.shared.pokemonEvoArray[1]?.imageUrl,
+               let evo2ImageUrl = PokeViewModel.shared.pokemonEvoArray[0]?.imageUrl {
+                moreDetailsVc.setupEvolution(evo1ImageUrl: evo1ImageUrl,
+                                             evo2ImageUrl: evo2ImageUrl)
+            }
+        } else if PokeViewModel.shared.pokemonEvoArray.count == 1 {
+            if let nextEvolutionUrl = PokeViewModel.shared.pokemonEvoArray[0]?.imageUrl {
+                moreDetailsVc.setupEvolution(evo1ImageUrl: "",
+                                             evo2ImageUrl: nextEvolutionUrl)
+            }
+        } else {
+            moreDetailsVc.setupEvolution(evo1ImageUrl: "", evo2ImageUrl: "")
+        }
     }
     
 }
+
 
 //MARK: - UISearchBarDelegate
 
@@ -270,8 +290,8 @@ extension PokeListViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.searchTextField.text = ""
-        viewModel.isFiltering = false
-        viewModel.getPokemonList { [weak self] pokemon in
+        PokeViewModel.shared.isFiltering = false
+        PokeViewModel.shared.getPokemonList { [weak self] pokemon in
             self?.collectionView.reloadData()
         }
         navigationItem.titleView = nil
@@ -284,15 +304,15 @@ extension PokeListViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text != "" {
-            viewModel.filteredPokemon = viewModel.pokemonList.filter({
-                (pokemon: PokeListData) in
-                viewModel.isFiltering = true
-                return pokemon.name?.lowercased().contains(searchText.lowercased()) ?? false
+            PokeViewModel.shared.filteredPokemon = PokeViewModel.shared.pokemonList.filter({
+                (pokemon: PokeListData?) in
+                PokeViewModel.shared.isFiltering = true
+                return pokemon?.name.lowercased().contains(searchText.lowercased()) ?? false
             })
             collectionView.reloadData()
         } else {
-            viewModel.isFiltering = false
-            viewModel.getPokemonList { [weak self] pokemon in
+            PokeViewModel.shared.isFiltering = false
+            PokeViewModel.shared.getPokemonList { [weak self] pokemon in
                 self?.collectionView.reloadData()
             }
         }

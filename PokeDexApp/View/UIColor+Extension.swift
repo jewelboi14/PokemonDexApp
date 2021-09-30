@@ -1,5 +1,5 @@
 //
-//  Color+Extension.swift
+//  UIColor+Extension.swift
 //  PokeDexApp
 //
 //  Created by Михаил on 21.09.2021.

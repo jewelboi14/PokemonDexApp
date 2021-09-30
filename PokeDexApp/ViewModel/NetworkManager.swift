@@ -9,37 +9,22 @@ import UIKit
 
 final class NetworkManager {
     
-    static let shared = NetworkManager()
-    
     //MARK: - Constants
     
     private let mainUrl = "https://pokedex-bb36f.firebaseio.com/pokemon.json"
     
     //MARK: - JSON handling methods
     
-    func fetchPokemonList(completion: @escaping ([PokeListData]) -> ()) {
-        var pokemonArray = [PokeListData]()
+    func fetchPokemonList(completion: @escaping ([PokeListData?]) -> ()) {
         guard let url = URL(string: mainUrl) else { return }
         let task = URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data, error == nil else { return }
             do {
-                guard let pokemon = try JSONSerialization.jsonObject(with: data, options: []) as? [AnyObject] else { return }
-                for (key, result) in pokemon.enumerated() {
-                    if let dictionary = result as? [String: AnyObject] {
-                        let pokemon = PokeListData(id: key, dictionary: dictionary)
-                        guard let imageUrl = pokemon.imageUrl else { return }
-                        self.downloadSprite(with: imageUrl) { image in
-                            pokemon.image = image
-                            pokemonArray.append(pokemon)
-                            pokemonArray.sort { poke1, poke2 -> Bool in
-                                return poke1.id! < poke2.id!
-                            }
-                            DispatchQueue.main.async {
-                                completion(pokemonArray)
-                            }
-                        }
-                    }
+                let pokemon = try JSONDecoder().decode([PokeListData?].self, from: data)
+                DispatchQueue.main.async {
+                    completion(pokemon)
                 }
+                
             } catch {
                 print("can't get pokemon list \(error)")
             }
@@ -47,7 +32,7 @@ final class NetworkManager {
         task.resume()
     }
     
-    private func downloadSprite(with urlString: String, completion: @escaping (UIImage) -> ()) {
+    func downloadSprite(with urlString: String, completion: @escaping (UIImage) -> ()) {
         guard let url = URL(string: urlString) else {
             return
         }

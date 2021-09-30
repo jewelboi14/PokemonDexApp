@@ -10,9 +10,15 @@ import Foundation
 
 final class PokemonCell: UICollectionViewCell {
     
-    //MARK: - Constants
+    //MARK: - Properties
     
     static let identifier = "CellIdentifier"
+    
+    private let controlView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private let pokeImageView: UIImageView = {
         let image = UIImageView()
@@ -34,10 +40,12 @@ final class PokemonCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.addSubview(pokeImageView)
-        contentView.addSubview(pokeNameLabel)
+        contentView.addSubview(controlView)
+        controlView.addSubview(pokeImageView)
+        controlView.addSubview(pokeNameLabel)
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
+        
     }
     
     required init?(coder: NSCoder) {
@@ -48,22 +56,30 @@ final class PokemonCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             
-            pokeImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -10),
-            pokeImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            pokeImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -40),
-            pokeImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, constant: -40),
+            controlView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            controlView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            controlView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            controlView.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            
+            pokeImageView.centerYAnchor.constraint(equalTo: controlView.centerYAnchor, constant: -10),
+            pokeImageView.centerXAnchor.constraint(equalTo: controlView.centerXAnchor),
+            pokeImageView.widthAnchor.constraint(equalTo: controlView.widthAnchor, constant: -40),
+            pokeImageView.heightAnchor.constraint(equalTo: controlView.heightAnchor, constant: -40),
        
-            pokeNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            pokeNameLabel.bottomAnchor.constraint(equalTo: controlView.bottomAnchor),
             pokeNameLabel.topAnchor.constraint(equalTo: pokeImageView.bottomAnchor, constant: 3),
-            pokeNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            pokeNameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            pokeNameLabel.widthAnchor.constraint(equalTo: controlView.widthAnchor),
+            pokeNameLabel.centerXAnchor.constraint(equalTo: controlView.centerXAnchor),
             
         ])
     }
     
-    func setupPokemon(name: String, image: UIImage) {
+    func setupPokemon(name: String, imageUrl: String) {
         pokeNameLabel.text = name
-        pokeImageView.image = image
+        PokeViewModel.shared.getPokemonImage(url: imageUrl) { image in
+            self.pokeImageView.image = image
+        }
+        
     }
     
 }
