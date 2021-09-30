@@ -176,12 +176,9 @@ final class DetailsViewController: UIViewController {
         view.addSubview(secondEvolutionImageView)
         view.addSubview(evolutionBottomLabel)
         
-        
-        
         NSLayoutConstraint.activate([
             
             //name
-            
             
             pokeNameLabel.widthAnchor.constraint(equalTo: view.widthAnchor),
             pokeNameLabel.heightAnchor.constraint(equalToConstant: 50),
@@ -300,7 +297,7 @@ final class DetailsViewController: UIViewController {
                        attack: String,
                        defence: String,
                        type: String,
-                       image: UIImage,
+                       imageUrl: String,
                        weight: String,
                        height: String,
                        description: String
@@ -312,12 +309,18 @@ final class DetailsViewController: UIViewController {
         self.pokeAttackLabel.text = attack
         self.pokeDefenseLabel.text = defence
         self.pokeNameLabel.text = name
-        self.pokeImageView.image = image
+        PokeViewModel.shared.getPokemonImage(url: imageUrl) { image in
+            self.pokeImageView.image = image
+        }
     }
     
-    func setupEvolution(evo1Image: UIImage, evo2Image: UIImage) {
-        self.firstEvolutionImageView.image = evo1Image
-        self.secondEvolutionImageView.image = evo2Image
+    func setupEvolution(evo1ImageUrl: String, evo2ImageUrl: String) {
+        PokeViewModel.shared.getPokemonImage(url: evo1ImageUrl) { image in
+            self.firstEvolutionImageView.image = image
+        }
+        PokeViewModel.shared.getPokemonImage(url: evo2ImageUrl) { image in
+            self.secondEvolutionImageView.image = image
+        }
     }
     
 }
