@@ -1,7 +1,7 @@
 # PokemonDexApp
 This is the simple iOS app for searching and browsing all classic 151 pokemon!
 This project includes:
-- Searching through the pokemons, using JSONSerialisation class
+- Searching through the pokemons, using JSONDecoder class
 - Smooth blur and animation if item in colletion view gets tapped (UIEffectView and UIAnimation implemented)
 - browsing short info about pokemon: name, attack, defense, type
 - browsing full information, including evolution chain!
