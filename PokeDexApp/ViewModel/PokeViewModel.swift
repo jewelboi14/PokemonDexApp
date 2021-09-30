@@ -28,8 +28,6 @@ final class PokeViewModel {
     
     //MARK: - Method to pass pokemon information to view
     
-    //Pokemon info array
-    
     func getPokemonList(completion: @escaping ([PokeListData?]) -> ()) {
         networkManager.fetchPokemonList { pokemon in
             self.pokemonList = pokemon
